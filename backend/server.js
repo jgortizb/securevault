@@ -57,6 +57,15 @@ inicializarBaseDatos();
 app.use(cors());
 app.use(express.json());
 
+// Ruta de estado / bienvenida
+app.get('/', (req, res) => {
+  res.json({
+    estado: 'Servidor activo',
+    baseDeDatos: 'PostgreSQL Cloud Conectada',
+    mensaje: 'API de SecureVault funcionando en producción'
+  });
+});
+
 // 3. Rutas de Autenticación
 
 // REGISTRO
