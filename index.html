@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SecureVault - Autenticación y Notas Seguras</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <!-- Estilos personalizados propios -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <div class="container p-3">
+
+    <!-- =================================================================== -->
+    <!-- VISTA 1: FORMULARIOS DE ACCESO (LOGIN / REGISTRO)                   -->
+    <!-- =================================================================== -->
+    <div id="authView" class="auth-card mx-auto">
+      
+      <!-- Cabecera -->
+      <div class="auth-header">
+        <h3 class="mb-1 fw-bold"><i class="bi bi-shield-lock-fill me-2"></i>SecureVault</h3>
+        <p class="mb-0 text-white-50 small">Gestor Seguro de Usuarios y Notas</p>
+      </div>
+
+      <div class="p-4">
+        <!-- Pestañas para alternar entre Iniciar Sesión y Registro -->
+        <ul class="nav nav-pills nav-fill mb-4" id="authTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active fw-semibold" id="tab-login" data-bs-toggle="pill" data-bs-target="#login-panel" type="button" role="tab">
+              <i class="bi bi-box-arrow-in-right me-1"></i> Iniciar Sesión
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link fw-semibold" id="tab-register" data-bs-toggle="pill" data-bs-target="#register-panel" type="button" role="tab">
+              <i class="bi bi-person-plus-fill me-1"></i> Registrarse
+            </button>
+          </li>
+        </ul>
+
+        <!-- Contenedor para mensajes dinámicos de JavaScript -->
+        <div id="alertBox" class="alert d-none py-2 px-3 small mb-3 text-center" role="alert"></div>
+
+        <div class="tab-content" id="authTabContent">
+          
+          <!-- FORMULARIO 1: INICIAR SESIÓN -->
+          <div class="tab-pane fade show active" id="login-panel" role="tabpanel">
+            <form id="loginForm">
+              <div class="mb-3">
+                <label for="loginEmail" class="form-label fw-medium">Correo Electrónico</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                  <input type="email" class="form-control" id="loginEmail" placeholder="tu@email.com" required>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="loginPassword" class="form-label fw-medium">Contraseña</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-key"></i></span>
+                  <input type="password" class="form-control" id="loginPassword" placeholder="••••••••" required>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary w-100 py-2 fw-bold mt-2">
+                <i class="bi bi-unlock-fill me-2"></i>Entrar
+              </button>
+            </form>
+          </div>
+
+          <!-- FORMULARIO 2: REGISTRO SEGURO -->
+          <div class="tab-pane fade" id="register-panel" role="tabpanel">
+            <form id="registerForm">
+              <div class="mb-3">
+                <label for="regEmail" class="form-label fw-medium">Correo Electrónico</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                  <input type="email" class="form-control" id="regEmail" placeholder="nuevo@email.com" required>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="regPassword" class="form-label fw-medium">Contraseña</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-key"></i></span>
+                  <input type="password" class="form-control" id="regPassword" placeholder="Mínimo 6 caracteres" required>
+                </div>
+              </div>
+
+              <div class="alert alert-info py-2 px-3 small d-flex align-items-center mb-3">
+                <i class="bi bi-shield-check fs-5 me-2"></i>
+                <div>Protección contra <strong>tablas arcoíris</strong> con bcrypt.</div>
+              </div>
+
+              <button type="submit" class="btn btn-success w-100 py-2 fw-bold">
+                <i class="bi bi-person-check-fill me-2"></i>Crear Cuenta
+              </button>
+            </form>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- VISTA 2: DASHBOARD PRIVADO (SE MUESTRA AL INICIAR SESIÓN)           -->
+    <!-- =================================================================== -->
+    <div id="dashboardView" class="dashboard-card mx-auto d-none">
+      
+      <div class="dashboard-header d-flex justify-content-between align-items-center">
+        <div>
+          <h4 class="mb-0 fw-bold"><i class="bi bi-safe2-fill me-2"></i>Mi Bóveda Segura</h4>
+          <span class="small opacity-75" id="userBadge">usuario@correo.com</span>
+        </div>
+        <button id="btnLogout" class="btn btn-outline-light btn-sm fw-semibold">
+          <i class="bi bi-box-arrow-right me-1"></i> Cerrar Sesión
+        </button>
+      </div>
+
+      <div class="p-4">
+        <!-- Formulario para agregar nota -->
+        <div class="card mb-4 border-0 shadow-sm bg-light">
+          <div class="card-body">
+            <h6 class="fw-bold mb-2"><i class="bi bi-plus-circle me-1"></i> Nueva Nota o Tarea Privada</h6>
+            <form id="noteForm">
+              <div class="mb-2">
+                <textarea id="noteInput" class="form-control" rows="2" placeholder="Escribe algo aquí... (se guardará en PostgreSQL)" required></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary btn-sm fw-bold">
+                <i class="bi bi-floppy-fill me-1"></i> Guardar en PostgreSQL
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Alerta del Dashboard -->
+        <div id="dashboardAlert" class="alert d-none py-2 px-3 small mb-3 text-center"></div>
+
+        <!-- Lista de Notas -->
+        <h6 class="fw-bold text-secondary mb-3 d-flex justify-content-between align-items-center">
+          <span><i class="bi bi-journal-text me-1"></i> Mis Notas Guardadas</span>
+          <span class="badge bg-secondary" id="notesCount">0</span>
+        </h6>
+
+        <div id="notesList" class="d-flex flex-column gap-2">
+          <!-- Las notas se cargarán aquí dinámicamente con JavaScript -->
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Bootstrap 5 JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Lógica interactiva en JavaScript -->
+  <script src="js/app.js"></script>
+</body>
+</html>

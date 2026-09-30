@@ -1,0 +1,12 @@
+# Dependencias
+node_modules/
+**/node_modules/
+
+# Secretos y variables de entorno (NUNCA subir contraseñas a GitHub)
+.env
+**/.env
+.env.*
+
+# Logs
+*.log
+npm-debug.log*

@@ -1,0 +1,44 @@
+/* Estilos personalizados para SecureVault */
+
+body {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: system-ui, -apple-system, sans-serif;
+  padding: 20px 0;
+}
+
+.auth-card, .dashboard-card {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  overflow: hidden;
+}
+
+.auth-card {
+  max-width: 440px;
+}
+
+.dashboard-card {
+  max-width: 650px;
+}
+
+.auth-header, .dashboard-header {
+  background: #2563eb;
+  color: white;
+  padding: 20px 24px;
+}
+
+.note-item {
+  border-left: 4px solid #2563eb;
+  background-color: #f8fafc;
+  transition: all 0.2s ease;
+}
+
+.note-item:hover {
+  background-color: #f1f5f9;
+  transform: translateX(2px);
+}
