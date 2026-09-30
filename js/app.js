@@ -1,6 +1,5 @@
-// js/app.js - Misión 6: Control de Vistas y CRUD de Notas Privadas con PostgreSQL
-
-const API_URL = 'http://localhost:3000/api';
+// URL pública de tu API desplegada en la nube de Render
+const API_URL = 'https://securevault-yhf6.onrender.com/api';
 
 // Estado local de la sesión (sin necesidad de tokens complejos por ahora)
 let usuarioActual = null;
