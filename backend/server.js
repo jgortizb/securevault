@@ -8,22 +8,50 @@ const { Pool } = require('pg');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// 1. Conexión a la Base de Datos PostgreSQL
-const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_DATABASE,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
-});
+// 1. Conexión a la Base de Datos PostgreSQL (Compatible con Local y Nube)
+const pool = new Pool(
+  process.env.DATABASE_URL
+    ? {
+        connectionString: process.env.DATABASE_URL,
+        ssl: { rejectUnauthorized: false } // Requerido por proveedores cloud como Render
+      }
+    : {
+        user: process.env.DB_USER,
+        host: process.env.DB_HOST,
+        database: process.env.DB_DATABASE,
+        password: process.env.DB_PASSWORD,
+        port: process.env.DB_PORT,
+      }
+);
 
-pool.query('SELECT NOW()', (err, res) => {
-  if (err) {
-    console.error('❌ Error al conectar a PostgreSQL:', err.message);
-  } else {
-    console.log('🐘 Conectado a PostgreSQL (Base de datos: securevault)');
+// Probar conexión y crear tablas automáticamente si no existen
+const inicializarBaseDatos = async () => {
+  try {
+    await pool.query('SELECT NOW()');
+    console.log('🐘 Conectado exitosamente a PostgreSQL.');
+
+    // Auto-creación de tablas para despliegue en la nube
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS usuarios (
+        id SERIAL PRIMARY KEY,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        password_hash VARCHAR(255) NOT NULL,
+        fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+      CREATE TABLE IF NOT EXISTS notas (
+        id SERIAL PRIMARY KEY,
+        usuario_id INTEGER REFERENCES usuarios(id) ON DELETE CASCADE,
+        contenido TEXT NOT NULL,
+        fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+    console.log('✅ Tablas "usuarios" y "notas" verificadas/creadas.');
+  } catch (err) {
+    console.error('❌ Error con la base de datos PostgreSQL:', err.message);
   }
-});
+};
+
+inicializarBaseDatos();
 
 // 2. Middlewares
 app.use(cors());
